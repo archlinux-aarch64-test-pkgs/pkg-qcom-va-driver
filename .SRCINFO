@@ -1,8 +1,8 @@
-pkgbase = libva-v4l2
+pkgbase = qcom-va-driver
 	pkgdesc = VA-API backend for Qualcomm Iris stateful V4L2 M2M decoding and H.264/HEVC encoding
-	pkgver = 1.0.0
-	pkgrel = 2
-	url = https://github.com/radxa-pkg/libva-v4l2
+	pkgver = 1.1.0
+	pkgrel = 1
+	url = https://github.com/radxa-pkg/qcom-va-driver
 	arch = aarch64
 	license = MIT
 	license = GPL-2.0-only
@@ -10,15 +10,24 @@ pkgbase = libva-v4l2
 	makedepends = meson
 	makedepends = ninja
 	makedepends = pkgconf
+	makedepends = ghc
+	makedepends = haskell-syb
+	makedepends = vulkan-headers
+	makedepends = glslang
 	depends = glibc
 	depends = gcc-libs
 	depends = libva
 	depends = libdrm
 	depends = mesa
 	depends = libglvnd
-	optdepends = qcom-fastcv-binaries: CDSP video scaling
-	optdepends = qcom-fastrpc: CDSP video scaling
-	source = libva-v4l2::git+https://github.com/radxa-pkg/libva-v4l2.git#tag=v1.0.0
+	depends = qcom-fastrpc
+	depends = vulkan-icd-loader
+	depends = vulkan-freedreno
+	provides = libva-v4l2=1.1.0
+	conflicts = libva-v4l2
+	replaces = libva-v4l2
+	options = !strip
+	source = qcom-va-driver::git+https://github.com/radxa-pkg/qcom-va-driver.git#tag=v1.1.0
 	sha256sums = SKIP
 
-pkgname = libva-v4l2
+pkgname = qcom-va-driver

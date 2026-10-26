@@ -1,22 +1,32 @@
 # Maintainer: Xilin Wu <sophon@radxa.com>
 
-pkgname=libva-v4l2
-pkgver=1.0.0
-pkgrel=2
+pkgname=qcom-va-driver
+pkgver=1.1.0
+pkgrel=1
 pkgdesc='VA-API backend for Qualcomm Iris stateful V4L2 M2M decoding and H.264/HEVC encoding'
 arch=('aarch64')
-url='https://github.com/radxa-pkg/libva-v4l2'
+url='https://github.com/radxa-pkg/qcom-va-driver'
+provides=("libva-v4l2=$pkgver")
+conflicts=('libva-v4l2')
+replaces=('libva-v4l2')
 license=('MIT' 'GPL-2.0-only') # backend MIT; bundled Linux patch GPL-2.0-only
-depends=('glibc' 'gcc-libs' 'libva' 'libdrm' 'mesa' 'libglvnd')
-makedepends=('git' 'meson' 'ninja' 'pkgconf')
-optdepends=('qcom-fastcv-binaries: CDSP video scaling'
-            'qcom-fastrpc: CDSP video scaling')
+depends=('glibc' 'gcc-libs' 'libva' 'libdrm' 'mesa' 'libglvnd' 'qcom-fastrpc' 'vulkan-icd-loader' 'vulkan-freedreno')
+makedepends=('git' 'meson' 'ninja' 'pkgconf' 'ghc' 'haskell-syb' 'vulkan-headers' 'glslang')
+# Native strip cannot process the Hexagon DSP skeleton.
+options=('!strip')
 source=("$pkgname::git+$url.git#tag=v$pkgver")
 sha256sums=('SKIP')
 
+prepare() {
+    # Fetch required build tools here so build() can run with nodownload.
+    # FastRPC is supplied by qcom-fastrpc, not the fallback subproject.
+    meson subprojects download --sourcedir="$srcdir/$pkgname" qaic hexagon
+}
+
 build() {
     rm -rf "$srcdir/build"
-    arch-meson "$srcdir/$pkgname" "$srcdir/build"
+    arch-meson "$srcdir/$pkgname" "$srcdir/build" \
+        -Dgpu_copy=enabled -Dcdsp_vpp=enabled -Dfastrpc=system -Dvulkan_vpp=enabled
     meson compile -C "$srcdir/build"
 }
 

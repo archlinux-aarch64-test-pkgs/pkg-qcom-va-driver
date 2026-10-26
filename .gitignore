@@ -1,4 +1,5 @@
 /src
 /pkg
 /libva-v4l2
+/qcom-va-driver
 /*.pkg.tar.*
